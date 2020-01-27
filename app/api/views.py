@@ -18,7 +18,7 @@ from .models import Project, Label, Document, RoleMapping, Role
 from .permissions import IsProjectAdmin, IsAnnotatorAndReadOnly, IsAnnotator, IsAnnotationApproverAndReadOnly, IsOwnAnnotation, IsAnnotationApprover
 from .serializers import ProjectSerializer, LabelSerializer, DocumentSerializer, UserSerializer
 from .serializers import ProjectPolymorphicSerializer, RoleMappingSerializer, RoleSerializer
-from .utils import CSVParser, ExcelParser, JSONParser, PlainTextParser, CoNLLParser, iterable_to_io
+from .utils import CSVParser, ExcelParser, JSONParser, PlainTextParser, CoNLLParser, iterable_to_io, JSONRestParser
 from .utils import JSONLRenderer
 from .utils import JSONPainter, CSVPainter
 
@@ -206,6 +206,26 @@ class AnnotationDetail(generics.RetrieveUpdateDestroyAPIView):
         model = project.get_annotation_class()
         self.queryset = model.objects.all()
         return self.queryset
+
+
+class NewDocWithAnnotation(APIView):
+    permission_classes = [IsAuthenticated & IsProjectAdmin]
+
+    def post(self, request, *args, **kwargs):
+        self.save_doc(
+            user=request.user,
+            data=request.data,
+            project_id=kwargs['project_id']
+        )
+        return Response(status=status.HTTP_201_CREATED)
+
+    @classmethod
+    def save_doc(cls, user, data, project_id):
+        project = get_object_or_404(Project, pk=project_id)
+        parser = JSONRestParser()
+        data = parser.parse(data)
+        storage = project.get_storage(data)
+        storage.save(user)
 
 
 class TextUploadAPI(APIView):

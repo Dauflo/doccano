@@ -217,6 +217,21 @@ class Seq2seqStorage(BaseStorage):
         return annotations
 
 
+class JSONRestParser(object):
+
+    def parse(self, documents):
+        data = []
+        for i, document in enumerate(documents):
+            try:
+                j = document
+                j['meta'] = json.dumps(j.get('meta', {}))
+                data.append(j)
+            except json.decoder.JSONDecodeError:
+                continue
+        if data:
+            yield data
+
+
 class FileParser(object):
 
     def parse(self, file):

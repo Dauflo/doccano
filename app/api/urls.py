@@ -7,7 +7,7 @@ from .views import ProjectList, ProjectDetail
 from .views import LabelList, LabelDetail, ApproveLabelsAPI
 from .views import DocumentList, DocumentDetail
 from .views import AnnotationList, AnnotationDetail
-from .views import TextUploadAPI, TextDownloadAPI, CloudUploadAPI
+from .views import TextUploadAPI, TextDownloadAPI, CloudUploadAPI, NewDocWithAnnotation
 from .views import StatisticsAPI
 from .views import RoleMappingList, RoleMappingDetail, Roles
 
@@ -40,6 +40,8 @@ urlpatterns = [
          TextUploadAPI.as_view(), name='doc_uploader'),
     path('projects/<int:project_id>/docs/download',
          TextDownloadAPI.as_view(), name='doc_downloader'),
+    path('projects/<int:project_id>/docs/add-docs-with-annotations',
+         NewDocWithAnnotation.as_view(), name='doc_new_annotations'),
     path('projects/<int:project_id>/roles',
          RoleMappingList.as_view(), name='rolemapping_list'),
     path('projects/<int:project_id>/roles/<int:rolemapping_id>',
