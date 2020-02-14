@@ -72,6 +72,7 @@ class DocumentSerializer(serializers.ModelSerializer):
         if request and not project.collaborative_annotation:
             annotations = annotations.filter(user=request.user)
         serializer = serializer(annotations, many=True)
+        # print(serializer.data)
         return serializer.data
 
     @classmethod
@@ -155,7 +156,9 @@ class ProjectFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
 
 class DocumentAnnotationSerializer(serializers.ModelSerializer):
     # label = ProjectFilteredPrimaryKeyRelatedField(queryset=Label.objects.all())
-    label = serializers.PrimaryKeyRelatedField(queryset=Label.objects.all())
+    # label = serializers.PrimaryKeyRelatedField(queryset=Label.objects.all())
+    label = serializers.StringRelatedField(many=False)
+
     document = serializers.PrimaryKeyRelatedField(queryset=Document.objects.all())
 
     class Meta:
@@ -166,7 +169,8 @@ class DocumentAnnotationSerializer(serializers.ModelSerializer):
 
 class SequenceAnnotationSerializer(serializers.ModelSerializer):
     #label = ProjectFilteredPrimaryKeyRelatedField(queryset=Label.objects.all())
-    label = serializers.PrimaryKeyRelatedField(queryset=Label.objects.all())
+    # label = serializers.PrimaryKeyRelatedField(queryset=Label.objects.all())
+    label = serializers.StringRelatedField(many=False)
     document = serializers.PrimaryKeyRelatedField(queryset=Document.objects.all())
 
     class Meta:
