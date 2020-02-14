@@ -16,7 +16,7 @@ from seqeval.metrics.sequence_labeling import get_entities
 
 from .exceptions import FileParseException
 from .models import Label
-from .serializers import DocumentSerializer, LabelSerializer
+from .serializers import DocumentSerializer, LabelSerializer, DownloadDocumentSerializer
 
 
 def extract_label(tag):
@@ -424,7 +424,7 @@ class JSONLRenderer(JSONRenderer):
 class JSONPainter(object):
 
     def paint(self, documents):
-        serializer = DocumentSerializer(documents, many=True)
+        serializer = DownloadDocumentSerializer(documents, many=True)
         data = []
         for d in serializer.data:
             d['meta'] = json.loads(d['meta'])
@@ -438,7 +438,7 @@ class JSONPainter(object):
     @staticmethod
     def paint_labels(documents, labels):
         serializer_labels = LabelSerializer(labels, many=True)
-        serializer = DocumentSerializer(documents, many=True)
+        serializer = DownloadDocumentSerializer(documents, many=True)
         data = []
         for d in serializer.data:
             labels = []

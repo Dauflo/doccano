@@ -58,6 +58,9 @@ class Project(PolymorphicModel):
     def get_storage(self, data):
         raise NotImplementedError()
 
+    def get_download_annotation_serializer(self):
+        raise NotImplementedError()
+
     def __str__(self):
         return self.name
 
@@ -88,6 +91,10 @@ class TextClassificationProject(Project):
         from .utils import ClassificationStorage
         return ClassificationStorage(data, self)
 
+    def get_download_annotation_serializer(self):
+        from .serializers import DownloadDocumentAnnotationSerializer
+        return DownloadDocumentAnnotationSerializer
+
 
 class SequenceLabelingProject(Project):
 
@@ -115,8 +122,14 @@ class SequenceLabelingProject(Project):
         from .utils import SequenceLabelingStorage
         return SequenceLabelingStorage(data, self)
 
+    def get_download_annotation_serializer(self):
+        return self.get_annotation_serializer()
+
 
 class Seq2seqProject(Project):
+
+    def get_download_annotation_serializer(self):
+        pass
 
     @property
     def image(self):

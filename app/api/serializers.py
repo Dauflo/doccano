@@ -72,7 +72,6 @@ class DocumentSerializer(serializers.ModelSerializer):
         if request and not project.collaborative_annotation:
             annotations = annotations.filter(user=request.user)
         serializer = serializer(annotations, many=True)
-        # print(serializer.data)
         return serializer.data
 
     @classmethod
@@ -83,6 +82,19 @@ class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Document
         fields = ('id', 'text', 'annotations', 'meta', 'annotation_approver')
+
+
+class DownloadDocumentSerializer(DocumentSerializer):
+    def get_annotations(self, instance):
+        request = self.context.get('request')
+        project = instance.project
+        model = project.get_annotation_class()
+        serializer = project.get_download_annotation_serializer()
+        annotations = model.objects.filter(document=instance.id)
+        if request and not project.collaborative_annotation:
+            annotations = annotations.filter(user=request.user)
+        serializer = serializer(annotations, many=True)
+        return serializer.data
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -156,8 +168,7 @@ class ProjectFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
 
 class DocumentAnnotationSerializer(serializers.ModelSerializer):
     # label = ProjectFilteredPrimaryKeyRelatedField(queryset=Label.objects.all())
-    # label = serializers.PrimaryKeyRelatedField(queryset=Label.objects.all())
-    label = serializers.StringRelatedField(many=False)
+    label = serializers.PrimaryKeyRelatedField(queryset=Label.objects.all())
 
     document = serializers.PrimaryKeyRelatedField(queryset=Document.objects.all())
 
@@ -167,10 +178,12 @@ class DocumentAnnotationSerializer(serializers.ModelSerializer):
         read_only_fields = ('user', )
 
 
-class SequenceAnnotationSerializer(serializers.ModelSerializer):
-    #label = ProjectFilteredPrimaryKeyRelatedField(queryset=Label.objects.all())
-    # label = serializers.PrimaryKeyRelatedField(queryset=Label.objects.all())
+class DownloadDocumentAnnotationSerializer(DocumentAnnotationSerializer):
     label = serializers.StringRelatedField(many=False)
+
+
+class SequenceAnnotationSerializer(serializers.ModelSerializer):
+    label = serializers.PrimaryKeyRelatedField(queryset=Label.objects.all())
     document = serializers.PrimaryKeyRelatedField(queryset=Document.objects.all())
 
     class Meta:
