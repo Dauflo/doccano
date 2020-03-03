@@ -8,9 +8,9 @@ services:
       - static_volume:/app/staticfiles
     environment:
       ADMIN_USERNAME: "admin"
-      ADMIN_PASSWORD: "password"
+      ADMIN_PASSWORD: "stuffy-footwear-gimmick-scant"
       ADMIN_EMAIL: "admin@example.com"
-      DATABASE_URL: "postgres://doccano:doccano@postgres:5432/doccano?sslmode=disable"
+      DATABASE_URL: "postgres://doccano:stuffy-footwear-gimmick-scant@postgres:5432/doccano?sslmode=disable"
       ALLOW_SIGNUP: "False"
       DEBUG: "False"
     depends_on:
@@ -30,7 +30,7 @@ services:
       - www:/var/www/html:ro
       - static_volume:/static
     ports:
-      - 80:80
+      - 90:80
     depends_on:
       - backend
     networks:
@@ -42,7 +42,7 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     environment:
       POSTGRES_USER: "doccano"
-      POSTGRES_PASSWORD: "doccano"
+      POSTGRES_PASSWORD: "stuffy-footwear-gimmick-scant"
       POSTGRES_DB: "doccano"
     networks:
       - network-backend
